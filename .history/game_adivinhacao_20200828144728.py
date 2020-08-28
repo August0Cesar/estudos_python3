@@ -1,7 +1,7 @@
 import random
 #Funções built-in exemplo: abs
 
-def jogar():
+def jogo():
     print("########################################")
     print("### Bem Vindo ao Jogo de Advinhação ####")
     print("########################################")
@@ -39,5 +39,3 @@ def jogar():
     
     print("Jogo Finalizado")
 
-if(__name__ =="__main__"):
-    jogar()

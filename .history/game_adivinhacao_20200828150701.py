@@ -39,5 +39,3 @@ def jogar():
     
     print("Jogo Finalizado")
 
-if(__name__ =="__main__"):
-    jogar()
