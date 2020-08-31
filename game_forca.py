@@ -1,11 +1,50 @@
 import random
 
 def jogar():
+    mensagemBoaVindas()
+
+    palavras = inicializaPalavras()
+
+    palavra_chave = seleciona_palavra_secreta(palavras)
+    print(palavra_chave)
+    
+    acertou       = False
+    inforcado     = False
+    tentativas    = 0
+
+    #List Comprehensions ["_" for letra in palavra_chave]
+    lista_palavras_acertadas = ["_" for letra in palavra_chave]
+
+    print(lista_palavras_acertadas)
+    while(not acertou and not inforcado):
+        
+        chute = input("Digite uma letra ").strip().upper()
+        
+        if (chute in palavra_chave):
+            mostra_palavras_acertadas(chute, lista_palavras_acertadas, palavra_chave)  
+        else:
+            tentativas +=1
+            desenha_forca(tentativas)
+            
+        inforcado = tentativas == 7
+        acertou   = "_" not in lista_palavras_acertadas
+
+    if(acertou):
+        imprime_mensagem_vencedor()
+    else:
+        imprime_mensagem_perdedor(palavra_chave)
+
+def seleciona_palavra_secreta(palavras):
+    index_palavra = random.randrange(0,len(palavras))
+    return palavras[index_palavra]
+
+def mensagemBoaVindas():
     print("########################################")
     print("### Bem Vindo ao  Jogo de Forca ########")
     print("########################################")
 
-    arquivo = open("palavras.txt", "r")
+def inicializaPalavras(file = "palavras.txt"):
+    arquivo = open(file, "r")
     palavras = []
     # for palavra in arquivo:
     #     palavras.append(palavra.strip().upper())
@@ -14,45 +53,16 @@ def jogar():
     with open("palavras.txt", "r") as arquivo:
         for palavra in arquivo:
             palavras.append(palavra.strip().upper())
+    return palavras
 
-
-
-
-
-    index_palavra = random.randrange(0,len(palavras))
-    palavra_chave = palavras[index_palavra]
-    acertou       = False
-    inforcado     = False
-    tentativas    = 0
-
-    #List Comprehensions ["_" for letra in palavra_chave]
-    lista_palavras_certas = ["_" for letra in palavra_chave]#List Comprehensions
-
+def mostra_palavras_acertadas(chute, lista_palavras_certas, palavra_chave):
+    index = 0
+    for letra in palavra_chave:
+        if(chute == letra):
+            # print("Letra {} encontrada na posicao {}".format(letra,index))
+            lista_palavras_certas[index] = letra
+        index += 1 
     print(lista_palavras_certas)
-    while(not acertou and not inforcado):
-        
-        chute         = input("Digite uma letra ")
-        chute         = chute.strip().upper()
-        index         = 0
-
-        if (chute in palavra_chave):
-            for letra in palavra_chave:
-                if(chute == letra):
-                    # print("Letra {} encontrada na posicao {}".format(letra,index))
-                    lista_palavras_certas[index] = letra
-                index += 1
-                # print(letra)
-            print(lista_palavras_certas)    
-        else:
-            tentativas +=1
-        inforcado = tentativas == 6
-        acertou   = "_" not in lista_palavras_certas
-
-    if(acertou):
-        print("Você ganhou!!")
-    else:
-        print("Você Perdeu!!")
-    print("Jogo Finalizado")
 
 def desenha_forca(erros):
     print("  _______     ")
@@ -139,5 +149,6 @@ def imprime_mensagem_perdedor(palavra_secreta):
 
 
 if(__name__ =="__main__"):
+    # main()
     jogar()
 
