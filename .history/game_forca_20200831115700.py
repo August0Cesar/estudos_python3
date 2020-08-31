@@ -7,18 +7,10 @@ def jogar():
 
     arquivo = open("palavras.txt", "r")
     palavras = []
-    # for palavra in arquivo:
-    #     palavras.append(palavra.strip().upper())
+    for palavra in arquivo:
+        palavras.append(palavra.strip().upper())
     
-    # arquivo.close()
-    with open("palavras.txt", "r") as arquivo:
-        for palavra in arquivo:
-            palavras.append(palavra.strip().upper())
-
-
-
-
-
+    arquivo.close()
     index_palavra = random.randrange(0,len(palavras))
     palavra_chave = palavras[index_palavra]
     acertou       = False
@@ -55,10 +47,5 @@ def jogar():
     print("Jogo Finalizado")
 
 
-
-
-
-
 if(__name__ =="__main__"):
     jogar()
-

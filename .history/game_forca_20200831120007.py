@@ -7,10 +7,10 @@ def jogar():
 
     arquivo = open("palavras.txt", "r")
     palavras = []
-    # for palavra in arquivo:
-    #     palavras.append(palavra.strip().upper())
+    for palavra in arquivo:
+        palavras.append(palavra.strip().upper())
     
-    # arquivo.close()
+    arquivo.close()
     with open("palavras.txt", "r") as arquivo:
         for palavra in arquivo:
             palavras.append(palavra.strip().upper())
@@ -55,10 +55,5 @@ def jogar():
     print("Jogo Finalizado")
 
 
-
-
-
-
 if(__name__ =="__main__"):
     jogar()
-

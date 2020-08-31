@@ -1,26 +1,9 @@
-import random
-
 def jogar():
     print("########################################")
     print("### Bem Vindo ao  Jogo de Forca ########")
     print("########################################")
 
-    arquivo = open("palavras.txt", "r")
-    palavras = []
-    # for palavra in arquivo:
-    #     palavras.append(palavra.strip().upper())
-    
-    # arquivo.close()
-    with open("palavras.txt", "r") as arquivo:
-        for palavra in arquivo:
-            palavras.append(palavra.strip().upper())
-
-
-
-
-
-    index_palavra = random.randrange(0,len(palavras))
-    palavra_chave = palavras[index_palavra]
+    palavra_chave = "banana".upper()
     acertou       = False
     inforcado     = False
     tentativas    = 0
@@ -55,10 +38,5 @@ def jogar():
     print("Jogo Finalizado")
 
 
-
-
-
-
 if(__name__ =="__main__"):
     jogar()
-
