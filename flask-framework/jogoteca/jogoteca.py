@@ -1,58 +1,48 @@
 from flask import Flask, render_template, request, redirect, session, flash, url_for
+from dao import JogoDao, UsuarioDao
+from flask_mysqldb import MySQL
+from models import Usuario, Jogo
+
 
 app = Flask(__name__)
 app.secret_key = 'augusto'
 
-class Jogo:
-    def __init__(self, nome, categoria, console):
-        self.__nome = nome
-        self.__categoria = categoria
-        self.__console =console
-    
-    @property
-    def nome(self):
-        return self.__nome
+# Configuração de banco
+app.config['MYSQL_HOST'] = "172.17.0.2"
+app.config['MYSQL_USER'] = "root"
+app.config['MYSQL_PASSWORD'] = "test"
+app.config['MYSQL_DB'] = "jogoteca"
+app.config['MYSQL_PORT'] = 3306
 
-    @property
-    def categoria(self):
-        return self.__categoria
-
-    @property
-    def console(self):
-        return self.__console
-
-class Usuario:
-    def __init__(self, id, nome, senha):
-        self.__id = id
-        self.__nome = nome
-        self.__senha = senha
-    
-    @property
-    def id(self):
-        return self.__id
-    
-    @property
-    def nome(self):
-        return self.__nome
-    
-    @property
-    def senha(self):
-        return self.__senha
-
-usuario1 = Usuario('augusto', 'Augusto Cesar', '123456')
-usuario2 = Usuario('ana', 'Ana Paula', '1a2')
-
-dict_usuarios = {usuario1.id: usuario1, usuario2.id: usuario2 }        
-
-jogo1 = Jogo('Gold of War 3', 'Ação', 'PS4')
-jogo2 = Jogo('Hallo 4', 'Ação', 'XBOX One')
-jogo3 = Jogo('Zeld LinkAwakness', 'RPG', 'Nintendo Swift')
-lista_jogos = [jogo1, jogo2, jogo3]
+db = MySQL(app)
+dao_jogos = JogoDao(db)
+dao_usuarios = UsuarioDao(db)
 
 @app.route('/jogos')
 def rota_inicio():
+    lista_jogos = dao_jogos.listar()
     return render_template('jogos/lista.html', titulo ='Jogoteca',
                             jogos = lista_jogos)
+
+@app.route('/jogos/editar/<int:id>')
+def rota_editar_jogo(id):
+    jogo = dao_jogos.busca_por_id(id)
+    print('Jogo para edição {} id {}'.format(jogo.nome,jogo.id))
+
+    if not session['usuario_logado'] or session['usuario_logado'] == None:
+        return redirect(url_for('login', proxima=url_for('rota_editar_jogo')))
+
+    return render_template('jogos/edita.html', titulo ='Editar Jogo', jogo=jogo)  
+
+@app.route('/jogos/salvar', methods = ['POST'])
+def rota_salvar_jogo():
+    novo_jogo = Jogo(request.form['nome'],
+                    request.form['categoria'],
+                    request.form['console'],id=request.form['id'])
+
+    # lista_jogos.append(novo_jogo)
+    dao_jogos.salvar(novo_jogo)
+    return redirect(url_for('rota_inicio'))
 
 @app.route('/jogos/novo')
 def rota_novo_jogo():
@@ -68,8 +58,14 @@ def rota_criar_jogo():
                     request.form['categoria'],
                     request.form['console'])
 
-    lista_jogos.append(novo_jogo)
+    # lista_jogos.append(novo_jogo)
+    dao_jogos.salvar(novo_jogo)
+    return redirect(url_for('rota_inicio'))
 
+@app.route('/deletar/<int:id>')
+def rota_deletar_jogo(id):
+    dao_jogos.deletar(id)
+    flash('Jogo deletado com sucesso')
     return redirect(url_for('rota_inicio'))
 
 @app.route('/login')
@@ -85,9 +81,9 @@ def logout():
 
 @app.route('/autenticar', methods = ['POST',])
 def autenticar():
+    usuario =  dao_usuarios.buscar_por_id(request.form['usuario'])
 
-    if request.form['usuario'] in dict_usuarios:
-        usuario = dict_usuarios.get(request.form['usuario'])
+    if usuario:
         if(usuario.senha == request.form['senha']):
             session['usuario_logado'] = request.form['usuario']
             flash('Usuario {} logado com Sucesso'.format(usuario.nome))
