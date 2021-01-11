@@ -1,13 +1,14 @@
-from desconto import DesontoTotalItensMaiorCinco, DesontoValorMaiorQuinhentos
+from desconto import DescontoTotalItensMaiorCinco, DescontoValorMaiorQuinhentos, NenhumDesconto
 
-class Calculador_de_descontos(object):
+
+class CalculadorDescontos(object):
 
     def calcula(self, orcamento):
 
-        desconto = DesontoTotalItensMaiorCinco().calcula(orcamento)
-        if desconto == 0:
-            desconto = DesontoValorMaiorQuinhentos().calcula(orcamento)
-            return desconto
+        desconto = DescontoTotalItensMaiorCinco(
+            DescontoValorMaiorQuinhentos(NenhumDesconto())
+        ).calcula(orcamento)
+        return desconto
 
 
 if __name__ == '__main__':
@@ -20,7 +21,6 @@ if __name__ == '__main__':
     orcamento.add_item(Item('Item C', 400.0))
     # print(orcamento.total_itens)
 
-    calculador_de_descontos = Calculador_de_descontos()
+    calculador_de_descontos = CalculadorDescontos()
     desconto = calculador_de_descontos.calcula(orcamento)
     print(f'Desconto calculado : {desconto}')
-    # imprime 38.5      
